@@ -1,13 +1,15 @@
 import { Card, CardContent } from "@/components/ui/card";
+import { MapPin } from "lucide-react";
 
 interface RecommendationCardProps {
   title: string;
   description: string;
   image: string;
   category: string;
+  location?: string;
 }
 
-const RecommendationCard = ({ title, description, image, category }: RecommendationCardProps) => {
+const RecommendationCard = ({ title, description, image, category, location }: RecommendationCardProps) => {
   return (
     <Card className="group overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
       <div className="relative h-64 overflow-hidden">
@@ -25,6 +27,12 @@ const RecommendationCard = ({ title, description, image, category }: Recommendat
       </div>
       <CardContent className="p-6">
         <h3 className="text-xl font-bold mb-2 text-foreground">{title}</h3>
+        {location && (
+          <div className="flex items-center gap-1 mb-2 text-sm text-muted-foreground">
+            <MapPin className="w-4 h-4" />
+            <span>{location}</span>
+          </div>
+        )}
         <p className="text-muted-foreground">{description}</p>
       </CardContent>
     </Card>

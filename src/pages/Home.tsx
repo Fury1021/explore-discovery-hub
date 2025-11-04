@@ -7,8 +7,16 @@ import { useState, useMemo } from "react";
 import heroImage from "@/assets/hero-home.jpg";
 import beach1 from "@/assets/beach1.jpg";
 import beach2 from "@/assets/beach2.jpg";
+import beach3 from "@/assets/beach3.jpg";
+import beach4 from "@/assets/beach4.jpg";
+import beach5 from "@/assets/beach5.jpg";
+import beach6 from "@/assets/beach6.jpg";
 import temple1 from "@/assets/temple1.jpg";
 import temple2 from "@/assets/temple2.jpg";
+import temple3 from "@/assets/temple3.jpg";
+import temple4 from "@/assets/temple4.jpg";
+import temple5 from "@/assets/temple5.jpg";
+import temple6 from "@/assets/temple6.jpg";
 import country1 from "@/assets/country1.jpg";
 import country2 from "@/assets/country2.jpg";
 
@@ -17,42 +25,109 @@ const recommendations = [
     title: "Maldives Tropical Paradise",
     description: "Experience the ultimate tropical getaway with turquoise waters, palm trees, and luxurious overwater bungalows in this pristine island paradise.",
     image: beach1,
-    category: "Beach"
+    category: "Beach",
+    location: "Maldives",
+    recommended: true
   },
   {
     title: "Sunset Beach Haven",
     description: "Witness breathtaking sunsets on golden sands where the sky meets the sea in a spectacular display of nature's beauty.",
     image: beach2,
-    category: "Beach"
+    category: "Beach",
+    location: "Bali, Indonesia",
+    recommended: true
+  },
+  {
+    title: "Nusa Dua Beach Paradise",
+    description: "Discover pristine white sands and crystal-clear turquoise waters perfect for swimming, snorkeling, and relaxation under traditional Balinese umbrellas.",
+    image: beach3,
+    category: "Beach",
+    location: "Bali, Indonesia",
+    recommended: true
+  },
+  {
+    title: "Santorini Black Sand Beach",
+    description: "Experience the unique volcanic black sand beaches with stunning white cliff views and iconic blue-domed churches overlooking the Aegean Sea.",
+    image: beach4,
+    category: "Beach",
+    location: "Santorini, Greece"
+  },
+  {
+    title: "Bora Bora Lagoon",
+    description: "Indulge in luxury at this world-famous turquoise lagoon with overwater bungalows and the majestic Mount Otemanu as your backdrop.",
+    image: beach5,
+    category: "Beach",
+    location: "Bora Bora, French Polynesia",
+    recommended: true
+  },
+  {
+    title: "Anse Source d'Argent",
+    description: "Marvel at the unique granite rock formations and powder-white sand beaches surrounded by crystal-clear turquoise waters and tropical palms.",
+    image: beach6,
+    category: "Beach",
+    location: "La Digue, Seychelles"
   },
   {
     title: "Golden Spires Temple",
     description: "Marvel at the intricate golden architecture of this Buddhist temple surrounded by lush tropical gardens and peaceful meditation spaces.",
     image: temple1,
-    category: "Temple"
+    category: "Temple",
+    location: "Chiang Mai, Thailand"
   },
   {
     title: "Mountain Temple Sanctuary",
     description: "Discover this majestic temple perched on misty mountainsides, adorned with cherry blossoms and offering panoramic views of ancient landscapes.",
     image: temple2,
-    category: "Temple"
+    category: "Temple",
+    location: "Kyoto, Japan"
+  },
+  {
+    title: "Angkor Wat Complex",
+    description: "Explore the magnificent ancient temple complex with stunning stone architecture, reflection pools, and breathtaking sunrise views over the jungle.",
+    image: temple3,
+    category: "Temple",
+    location: "Siem Reap, Cambodia"
+  },
+  {
+    title: "Fushimi Inari Shrine",
+    description: "Walk through thousands of vibrant red torii gates creating mesmerizing tunnels that lead up the sacred mountain through mystical forest paths.",
+    image: temple4,
+    category: "Temple",
+    location: "Kyoto, Japan"
+  },
+  {
+    title: "Borobudur Temple",
+    description: "Visit this massive ancient Buddhist temple featuring intricate stone carvings, Buddha statues, and stunning views of volcanic mountains.",
+    image: temple5,
+    category: "Temple",
+    location: "Central Java, Indonesia"
+  },
+  {
+    title: "Grand Palace Temple",
+    description: "Experience the opulence of traditional Thai architecture with golden spires, ornate decorations, and the sacred Emerald Buddha temple.",
+    image: temple6,
+    category: "Temple",
+    location: "Bangkok, Thailand"
   },
   {
     title: "European Countryside",
     description: "Wander through rolling hills, charming villages, and historic architecture in the heart of Europe's most picturesque regions.",
     image: country1,
-    category: "Country"
+    category: "Country",
+    location: "Europe"
   },
   {
     title: "New Zealand Wilderness",
     description: "Explore dramatic mountain ranges, pristine lakes, and untouched natural beauty in one of the world's most spectacular adventure destinations.",
     image: country2,
-    category: "Country"
+    category: "Country",
+    location: "New Zealand"
   }
 ];
 
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchFocused, setSearchFocused] = useState(false);
 
   const filteredRecommendations = useMemo(() => {
     if (!searchQuery.trim()) return recommendations;
@@ -61,13 +136,16 @@ const Home = () => {
     return recommendations.filter(rec => 
       rec.title.toLowerCase().includes(query) ||
       rec.description.toLowerCase().includes(query) ||
-      rec.category.toLowerCase().includes(query)
+      rec.category.toLowerCase().includes(query) ||
+      rec.location?.toLowerCase().includes(query)
     );
   }, [searchQuery]);
 
   const beachResults = filteredRecommendations.filter(r => r.category === "Beach");
   const templeResults = filteredRecommendations.filter(r => r.category === "Temple");
   const countryResults = filteredRecommendations.filter(r => r.category === "Country");
+  
+  const recommendedBeaches = recommendations.filter(r => r.category === "Beach" && r.recommended);
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -117,6 +195,8 @@ const Home = () => {
                 placeholder="Search destinations, beaches, temples, countries..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => setSearchFocused(true)}
+                onBlur={() => setTimeout(() => setSearchFocused(false), 200)}
                 className="pl-12 h-14 text-lg bg-background shadow-md"
               />
             </div>
@@ -124,6 +204,26 @@ const Home = () => {
               <p className="mt-4 text-center text-muted-foreground">
                 Found {filteredRecommendations.length} result{filteredRecommendations.length !== 1 ? 's' : ''}
               </p>
+            )}
+            {searchFocused && !searchQuery && (
+              <div className="mt-4 p-4 bg-background rounded-lg shadow-lg">
+                <h4 className="font-semibold mb-3 text-foreground">Recommended Beaches</h4>
+                <div className="space-y-2">
+                  {recommendedBeaches.map((beach, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setSearchQuery(beach.title)}
+                      className="w-full text-left px-3 py-2 rounded hover:bg-muted transition-colors flex items-center gap-2"
+                    >
+                      <Search className="w-4 h-4 text-muted-foreground" />
+                      <div>
+                        <div className="font-medium text-sm">{beach.title}</div>
+                        <div className="text-xs text-muted-foreground">{beach.location}</div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
             )}
           </div>
         </div>
@@ -148,6 +248,7 @@ const Home = () => {
                 description={rec.description}
                 image={rec.image}
                 category={rec.category}
+                location={rec.location}
               />
             ))}
           </div>
@@ -174,6 +275,7 @@ const Home = () => {
                 description={rec.description}
                 image={rec.image}
                 category={rec.category}
+                location={rec.location}
               />
             ))}
           </div>
@@ -200,6 +302,7 @@ const Home = () => {
                 description={rec.description}
                 image={rec.image}
                 category={rec.category}
+                location={rec.location}
               />
             ))}
           </div>
