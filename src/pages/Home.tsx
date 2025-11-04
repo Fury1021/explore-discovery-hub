@@ -1,7 +1,9 @@
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import RecommendationCard from "@/components/RecommendationCard";
-import { ArrowRight, Compass } from "lucide-react";
+import { ArrowRight, Compass, Search } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useState, useMemo } from "react";
 import heroImage from "@/assets/hero-home.jpg";
 import beach1 from "@/assets/beach1.jpg";
 import beach2 from "@/assets/beach2.jpg";
@@ -10,7 +12,62 @@ import temple2 from "@/assets/temple2.jpg";
 import country1 from "@/assets/country1.jpg";
 import country2 from "@/assets/country2.jpg";
 
+const recommendations = [
+  {
+    title: "Maldives Tropical Paradise",
+    description: "Experience the ultimate tropical getaway with turquoise waters, palm trees, and luxurious overwater bungalows in this pristine island paradise.",
+    image: beach1,
+    category: "Beach"
+  },
+  {
+    title: "Sunset Beach Haven",
+    description: "Witness breathtaking sunsets on golden sands where the sky meets the sea in a spectacular display of nature's beauty.",
+    image: beach2,
+    category: "Beach"
+  },
+  {
+    title: "Golden Spires Temple",
+    description: "Marvel at the intricate golden architecture of this Buddhist temple surrounded by lush tropical gardens and peaceful meditation spaces.",
+    image: temple1,
+    category: "Temple"
+  },
+  {
+    title: "Mountain Temple Sanctuary",
+    description: "Discover this majestic temple perched on misty mountainsides, adorned with cherry blossoms and offering panoramic views of ancient landscapes.",
+    image: temple2,
+    category: "Temple"
+  },
+  {
+    title: "European Countryside",
+    description: "Wander through rolling hills, charming villages, and historic architecture in the heart of Europe's most picturesque regions.",
+    image: country1,
+    category: "Country"
+  },
+  {
+    title: "New Zealand Wilderness",
+    description: "Explore dramatic mountain ranges, pristine lakes, and untouched natural beauty in one of the world's most spectacular adventure destinations.",
+    image: country2,
+    category: "Country"
+  }
+];
+
 const Home = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredRecommendations = useMemo(() => {
+    if (!searchQuery.trim()) return recommendations;
+    
+    const query = searchQuery.toLowerCase();
+    return recommendations.filter(rec => 
+      rec.title.toLowerCase().includes(query) ||
+      rec.description.toLowerCase().includes(query) ||
+      rec.category.toLowerCase().includes(query)
+    );
+  }, [searchQuery]);
+
+  const beachResults = filteredRecommendations.filter(r => r.category === "Beach");
+  const templeResults = filteredRecommendations.filter(r => r.category === "Temple");
+  const countryResults = filteredRecommendations.filter(r => r.category === "Country");
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -49,8 +106,32 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Search Section */}
+      <section className="py-12 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="max-w-2xl mx-auto">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Search destinations, beaches, temples, countries..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-12 h-14 text-lg bg-background shadow-md"
+              />
+            </div>
+            {searchQuery && (
+              <p className="mt-4 text-center text-muted-foreground">
+                Found {filteredRecommendations.length} result{filteredRecommendations.length !== 1 ? 's' : ''}
+              </p>
+            )}
+          </div>
+        </div>
+      </section>
+
       {/* Beach Recommendations */}
-      <section className="py-20 bg-background">
+      {beachResults.length > 0 && (
+        <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold mb-4 text-foreground">Paradise Beaches</h2>
@@ -60,24 +141,23 @@ const Home = () => {
           </div>
           
           <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            <RecommendationCard
-              title="Maldives Tropical Paradise"
-              description="Experience the ultimate tropical getaway with turquoise waters, palm trees, and luxurious overwater bungalows in this pristine island paradise."
-              image={beach1}
-              category="Beach"
-            />
-            <RecommendationCard
-              title="Sunset Beach Haven"
-              description="Witness breathtaking sunsets on golden sands where the sky meets the sea in a spectacular display of nature's beauty."
-              image={beach2}
-              category="Beach"
-            />
+            {beachResults.map((rec, idx) => (
+              <RecommendationCard
+                key={idx}
+                title={rec.title}
+                description={rec.description}
+                image={rec.image}
+                category={rec.category}
+              />
+            ))}
           </div>
         </div>
       </section>
+      )}
 
       {/* Temple Recommendations */}
-      <section className="py-20 bg-muted/30">
+      {templeResults.length > 0 && (
+        <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold mb-4 text-foreground">Sacred Temples</h2>
@@ -87,24 +167,23 @@ const Home = () => {
           </div>
           
           <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            <RecommendationCard
-              title="Golden Spires Temple"
-              description="Marvel at the intricate golden architecture of this Buddhist temple surrounded by lush tropical gardens and peaceful meditation spaces."
-              image={temple1}
-              category="Temple"
-            />
-            <RecommendationCard
-              title="Mountain Temple Sanctuary"
-              description="Discover this majestic temple perched on misty mountainsides, adorned with cherry blossoms and offering panoramic views of ancient landscapes."
-              image={temple2}
-              category="Temple"
-            />
+            {templeResults.map((rec, idx) => (
+              <RecommendationCard
+                key={idx}
+                title={rec.title}
+                description={rec.description}
+                image={rec.image}
+                category={rec.category}
+              />
+            ))}
           </div>
         </div>
       </section>
+      )}
 
       {/* Country Recommendations */}
-      <section className="py-20 bg-background">
+      {countryResults.length > 0 && (
+        <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold mb-4 text-foreground">Explore by Country</h2>
@@ -114,21 +193,35 @@ const Home = () => {
           </div>
           
           <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            <RecommendationCard
-              title="European Countryside"
-              description="Wander through rolling hills, charming villages, and historic architecture in the heart of Europe's most picturesque regions."
-              image={country1}
-              category="Country"
-            />
-            <RecommendationCard
-              title="New Zealand Wilderness"
-              description="Explore dramatic mountain ranges, pristine lakes, and untouched natural beauty in one of the world's most spectacular adventure destinations."
-              image={country2}
-              category="Country"
-            />
+            {countryResults.map((rec, idx) => (
+              <RecommendationCard
+                key={idx}
+                title={rec.title}
+                description={rec.description}
+                image={rec.image}
+                category={rec.category}
+              />
+            ))}
           </div>
         </div>
       </section>
+      )}
+
+      {/* No Results Message */}
+      {searchQuery && filteredRecommendations.length === 0 && (
+        <section className="py-20 bg-background">
+          <div className="container mx-auto px-4 text-center">
+            <p className="text-xl text-muted-foreground">No destinations found matching "{searchQuery}"</p>
+            <Button 
+              onClick={() => setSearchQuery("")}
+              variant="outline"
+              className="mt-4"
+            >
+              Clear Search
+            </Button>
+          </div>
+        </section>
+      )}
 
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-r from-primary to-secondary">
